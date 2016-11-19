@@ -1,25 +1,29 @@
-FROM gliderlabs/alpine:3.4
+FROM alpine:3.4
 
-MAINTAINER Paul Schoenfelder <paulschoenfelder@gmail.com>
+# Original Maintainer:
+#MAINTAINER Paul Schoenfelder <paulschoenfelder@gmail.com>
+
+MAINTAINER Ho-Sheng Hsiao <hosh@legal.io>
 
 # Important!  Update this no-op ENV variable when this Dockerfile
 # is updated with the current date. It will force refresh of all
 # of the base images and things like `apt-get update` won't be using
 # old cached versions when the Dockerfile is built.
-ENV REFRESHED_AT=2016-11-01 \
+ENV REFRESHED_AT=2016-11-19\
     LANG=en_US.UTF-8 \
-    HOME=/opt/app/ \
+    HOME=/home/app/ \
     # Set this so that CTRL+G works properly
-    TERM=xterm
+    TERM=xterm \
+    OTP_BRANCH=OTP-19.1.6
 
 WORKDIR /tmp/erlang-build
 
 # Install Erlang
 RUN \
-    # Create default user and home directory, set owner to default
+    # Create default user and home directory, set owner to app
     mkdir -p ${HOME} && \
-    adduser -s /bin/sh -u 1001 -G root -h ${HOME} -S -D default && \
-    chown -R 1001:0 ${HOME} && \
+    adduser -s /bin/sh -u 1001 -G root -h ${HOME} -S -D app && \
+    chown -R 9999:0 ${HOME} && \
     # Add edge repos tagged so that we can selectively install edge packages
     echo "@edge http://nl.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories && \
     # Upgrade Alpine and base packages
@@ -35,7 +39,7 @@ RUN \
     apk add --no-cache --virtual .erlang-build \
       git autoconf build-base perl-dev && \
     # Shallow clone Erlang/OTP 19.1.5
-    git clone -b OTP-19.0.1 --single-branch --depth 1 https://github.com/erlang/otp.git . && \
+    git clone -b ${OTP_BRANCH} --single-branch --depth 1 https://github.com/erlang/otp.git . && \
     # Erlang/OTP build env
     export ERL_TOP=/tmp/erlang-build && \
     export PATH=$ERL_TOP/bin:$PATH && \
