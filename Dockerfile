@@ -22,8 +22,8 @@ WORKDIR /tmp/erlang-build
 RUN \
     # Create default user and home directory, set owner to app
     mkdir -p ${HOME} && \
-    adduser -s /bin/sh -u 1001 -G root -h ${HOME} -S -D app && \
-    chown -R 9999:0 ${HOME} && \
+    adduser -s /bin/sh -u 9999 -h ${HOME} -D app && \
+    chown -R app:app ${HOME} && \
     # Add edge repos tagged so that we can selectively install edge packages
     echo "@edge http://nl.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories && \
     # Upgrade Alpine and base packages
