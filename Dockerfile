@@ -18,6 +18,9 @@ ENV REFRESHED_AT=2016-11-19\
 
 WORKDIR /tmp/erlang-build
 
+# su-exec
+RUN apk --no-cache --update add su-exec
+
 # Install Erlang
 RUN \
     # Create default user and home directory, set owner to app
