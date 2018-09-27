@@ -1,20 +1,19 @@
-FROM alpine:3.4
+FROM alpine:3.8
 
-# Original Maintainer:
+# Original Maintainer: (bitwalker)
 #MAINTAINER Paul Schoenfelder <paulschoenfelder@gmail.com>
-
 MAINTAINER Ho-Sheng Hsiao <hosh@legal.io>
 
 # Important!  Update this no-op ENV variable when this Dockerfile
 # is updated with the current date. It will force refresh of all
 # of the base images and things like `apt-get update` won't be using
 # old cached versions when the Dockerfile is built.
-ENV REFRESHED_AT=2016-11-19\
+ENV REFRESHED_AT=2018-09-27\
     LANG=en_US.UTF-8 \
     HOME=/home/app/ \
     # Set this so that CTRL+G works properly
     TERM=xterm \
-    OTP_BRANCH=OTP-19.1.6
+    OTP_BRANCH=OTP-21.0.9
 
 WORKDIR /tmp/erlang-build
 
@@ -27,7 +26,9 @@ RUN \
     mkdir -p ${HOME} && \
     adduser -s /bin/sh -u 9999 -h ${HOME} -D app && \
     chown -R app:app ${HOME} && \
-    # Add edge repos tagged so that we can selectively install edge packages
+    # Add tagged repos as well as the edge repo so that we can selectively install edge packages
+    echo "@main http://dl-cdn.alpinelinux.org/alpine/v3.8/main" >> /etc/apk/repositories && \
+    echo "@community http://dl-cdn.alpinelinux.org/alpine/v3.8/community" >> /etc/apk/repositories && \
     echo "@edge http://nl.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories && \
     # Upgrade Alpine and base packages
     apk --no-cache --update upgrade && \
